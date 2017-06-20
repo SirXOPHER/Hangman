@@ -1,9 +1,8 @@
-package xopher.hangman;
+package hangman;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class Game {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        Scanner in = new Scanner(new FileReader("resources/words.txt"));
+        Scanner in = new Scanner(new FileReader("src/main/resources/words.txt"));
         List<String> words = new ArrayList<String>();
         while (in.hasNextLine()) {
             words.add(in.nextLine());
