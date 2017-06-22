@@ -11,6 +11,7 @@ import java.util.Random;
 
 public class Game {
 
+    private static Scanner user = new Scanner(System.in);
     private static int stage = 0;       // stage of current round
     private static List<String> words;  // pool of words
     private static String word;         // plaintext word for current round
@@ -31,28 +32,27 @@ public class Game {
         // Issue: playAgain() method will not take input (Scanner issue?)
         // playAgain() method takes input if first round is omitted!?!
         // Block handling the replay loop deactivated
-        /*
-        Scanner repeat = new Scanner(System.in);
+        
         boolean finished = false;
         do {
-            if (playAgainPrompt(repeat) == true) {
+            if (playAgainPrompt() == true) {
                 System.out.println(" \n \n" + "Alright, here we go again!");
                 stage = 0;
                 playRound();
             } else {
                 System.out.println(" \n \n" + "Okay, let's call it a day! Thanks for playing Hangman!");
+		user.close();
                 finished = true;
             }
         } while (!finished);
-        repeat.close();
-        */
+        user.close(); //was is this?
+        
     }
 
     private static void playRound() throws FileNotFoundException {
         Scanner game_state = new Scanner(new FileReader("src/main/resources/game_state.txt"));
         game_state.useDelimiter("\\s*;\\s*");
         printGameStateString(game_state); // show title screen on console (first in game_state.txt)
-        Scanner user = new Scanner(System.in);
         Random pick = new Random();
         int  n = pick.nextInt(100) + 1;
         word = words.get(n); // to-do: replace with .remove() and handle empty words list
@@ -82,7 +82,6 @@ public class Game {
             }
         }
         game_state.close();
-        user.close();
     }
 
     private static String checkInput(char letter) {
@@ -108,7 +107,7 @@ public class Game {
             System.out.println("Game has already ended!");
      }
 
-    private static boolean playAgainPrompt(Scanner again) {
+    private static boolean playAgainPrompt() {
 
         boolean play = true;
         boolean valid = false;
@@ -117,10 +116,10 @@ public class Game {
         {
             System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
             System.out.print(" \n \n" + "YES [Y] or NO [N]:");
-            String input = again.nextLine();
+            String input = user.nextLine();
 
             if      (input.toLowerCase().equals("y")) { valid = true; }
-            else if (input.toLowerCase().equals("n")) { valid = true; play = false; }
+            else if (input.toLowerCase().equals("n")) { valid = true; play = false;}
             else {
                     System.out.println(" \n \n" + "Fat-finger error? Let's try this again:");
             }
