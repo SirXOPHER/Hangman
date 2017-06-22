@@ -11,7 +11,8 @@ import java.util.Random;
 
 public class Game {
 
-    private static Scanner user = new Scanner(System.in);
+    private static Scanner user = new Scanner(System.in);   // reading all user input
+
     private static int stage = 0;       // stage of current round
     private static List<String> words;  // pool of words
     private static String word;         // plaintext word for current round
@@ -29,10 +30,7 @@ public class Game {
 
         playRound();
 
-        // Issue: playAgain() method will not take input (Scanner issue?)
-        // playAgain() method takes input if first round is omitted!?!
-        // Block handling the replay loop deactivated
-        
+        // code block asking for another round or exit
         boolean finished = false;
 	System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
         System.out.print(" \n \n" + "YES [Y] or NO [N]:");
@@ -43,12 +41,11 @@ public class Game {
                 playRound();
             } else {
                 System.out.println(" \n \n" + "Okay, let's call it a day! Thanks for playing Hangman!");
-		user.close();
+		            user.close();
                 finished = true;
             }
         } while (!finished);
-        user.close();
-        
+        user.close(); // minor issue: is this statement reachable? If not, let's delete this line.
     }
 
     private static void playRound() throws FileNotFoundException {
@@ -62,7 +59,7 @@ public class Game {
         int stage_tracker;
 
         while (hidden.contains("_") && stage < 7) {
-            //System.out.println(" \n \n" + "ONLY FOR DEVELOPMENT // " + "STAGE:" + stage + " | " + "WORD:" + word);
+            // System.out.println(" \n \n" + "ONLY FOR DEVELOPMENT // " + "STAGE:" + stage + " | " + "WORD:" + word);
             System.out.println(" \n \n" + "HIDDEN WORD: " + hidden.replace("", " ").trim());
             System.out.println(" \n \n" + "Take a guess (enter a letter A - Z)");
 
@@ -101,7 +98,7 @@ public class Game {
         else                             { hidden = checked; }
     }
     
-    // Each time it's called it will print next set of characters surrounded by ; and ; in file game_state.txt
+    // each time it's called it will print next set of characters surrounded by ; and ; in file game_state.txt
     private static void printGameStateString(Scanner state) throws FileNotFoundException{
     	if( state.hasNext() ){
 	    	System.out.println(state.next());
@@ -109,6 +106,9 @@ public class Game {
             System.out.println("Game has already ended!");
      }
 
+    // current issue:
+    // fat-finger error will be printed after completion of each round
+    // (without input)
     private static boolean playAgainPrompt() {
 	 String input = user.next();
 	 if(input.toLowerCase().equals("y")) { 
