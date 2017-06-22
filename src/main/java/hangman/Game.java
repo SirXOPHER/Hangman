@@ -34,8 +34,10 @@ public class Game {
         // Block handling the replay loop deactivated
         
         boolean finished = false;
+	System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
+        System.out.print(" \n \n" + "YES [Y] or NO [N]:");
         do {
-            if (playAgainPrompt() == true) {
+            if (playAgainPrompt()) {
                 System.out.println(" \n \n" + "Alright, here we go again!");
                 stage = 0;
                 playRound();
@@ -45,7 +47,7 @@ public class Game {
                 finished = true;
             }
         } while (!finished);
-        user.close(); //was is this?
+        user.close();
         
     }
 
@@ -108,22 +110,16 @@ public class Game {
      }
 
     private static boolean playAgainPrompt() {
-
-        boolean play = true;
-        boolean valid = false;
-
-        while(!valid)
-        {
-            System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
-            System.out.print(" \n \n" + "YES [Y] or NO [N]:");
-            String input = user.nextLine();
-
-            if      (input.toLowerCase().equals("y")) { valid = true; }
-            else if (input.toLowerCase().equals("n")) { valid = true; play = false;}
-            else {
-                    System.out.println(" \n \n" + "Fat-finger error? Let's try this again:");
-            }
-        }
-        return play;
-    }
+	 String input = user.next();
+	 if(input.toLowerCase().equals("y")) { 
+	 	return true;
+	 }
+	 else if(input.toLowerCase().equals("n")) { 
+	 	return false;
+	 }
+	 else{
+	 	System.out.println(" \n \n" + "Fat-finger error? Let's try this again:");
+	 	return playAgainPrompt();
+	 }
+   }
 }
