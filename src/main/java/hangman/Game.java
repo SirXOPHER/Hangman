@@ -53,8 +53,9 @@ public class Game {
         game_state.useDelimiter("\\s*;\\s*");
         printGameStateString(game_state); // show title screen on console (first in game_state.txt)
         Random pick = new Random();
-        int  n = pick.nextInt(100) + 1;
-        word = words.get(n); // to-do: replace with .remove() and handle empty words list
+        int wordPoolSize = words.size(); // dynamic approach: variable that measures number of words in text file
+        int  n = pick.nextInt(wordPoolSize) + 1;
+        word = words.get(n-1); // to-do: replace with .remove() and handle empty words list
         hidden = new String(new char[word.length()]).replace("\0", "_");
         int stage_tracker;
 
