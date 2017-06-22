@@ -32,17 +32,20 @@ public class Game {
 
         // code block asking for another round or exit
         boolean finished = false;
+	System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
+        System.out.print(" \n \n" + "YES [Y] or NO [N]:");
         do {
-            if (playAgainPrompt() == true) {
+            if (playAgainPrompt()) {
                 System.out.println(" \n \n" + "Alright, here we go again!");
                 stage = 0;
                 playRound();
             } else {
                 System.out.println(" \n \n" + "Okay, let's call it a day! Thanks for playing Hangman!");
-		        user.close();
+		            user.close();
                 finished = true;
             }
         } while (!finished);
+        user.close(); // minor issue: is this statement reachable? If not, let's delete this line.
     }
 
     private static void playRound() throws FileNotFoundException {
@@ -107,22 +110,16 @@ public class Game {
     // fat-finger error will be printed after completion of each round
     // (without input)
     private static boolean playAgainPrompt() {
-
-        boolean play = true;
-        boolean valid = false;
-
-        while(!valid)
-        {
-            System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
-            System.out.print(" \n \n" + "YES [Y] or NO [N]:");
-            String input = user.nextLine();
-
-            if      (input.toLowerCase().equals("y")) { valid = true; }
-            else if (input.toLowerCase().equals("n")) { valid = true; play = false; }
-            else {
-                    System.out.println(" \n \n" + "Fat-finger error? Let's try this again:");
-            }
-        }
-        return play;
-    }
+	 String input = user.next();
+	 if(input.toLowerCase().equals("y")) { 
+	 	return true;
+	 }
+	 else if(input.toLowerCase().equals("n")) { 
+	 	return false;
+	 }
+	 else{
+	 	System.out.println(" \n \n" + "Fat-finger error? Let's try this again:");
+	 	return playAgainPrompt();
+	 }
+   }
 }
