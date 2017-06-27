@@ -32,20 +32,19 @@ public class Game {
 
         // code block asking for another round or exit
         boolean finished = false;
-	System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
-        System.out.print(" \n \n" + "YES [Y] or NO [N]:");
         do {
+            System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
+            System.out.print(" \n \n" + "YES [Y] or NO [N]:");
             if (playAgainPrompt()) {
                 System.out.println(" \n \n" + "Alright, here we go again!");
                 stage = 0;
                 playRound();
             } else {
                 System.out.println(" \n \n" + "Okay, let's call it a day! Thanks for playing Hangman!");
-		            user.close();
+                user.close();
                 finished = true;
             }
         } while (!finished);
-        user.close(); // minor issue: is this statement reachable? If not, let's delete this line.
     }
 
     private static void playRound() throws FileNotFoundException {
@@ -57,14 +56,34 @@ public class Game {
         int  n = pick.nextInt(wordPoolSize) + 1;
         word = words.get(n-1); // to-do: replace with .remove() and handle empty words list
         hidden = new String(new char[word.length()]).replace("\0", "_");
+        String letters  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // remaining letters to pick from
+        String alphabet  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // required for validity check
         int stage_tracker;
 
         while (hidden.contains("_") && stage < 7) {
             // System.out.println(" \n \n" + "ONLY FOR DEVELOPMENT // " + "STAGE:" + stage + " | " + "WORD:" + word);
             System.out.println(" \n \n" + "HIDDEN WORD: " + hidden.replace("", " ").trim());
+            System.out.println(" \n \n" + letters.replace("", " ").trim());
             System.out.println(" \n \n" + "Take a guess (enter a letter A - Z)");
+            System.out.print(">");
 
             char c = user.next().toLowerCase().charAt(0);
+
+            while (!alphabet.contains(String.valueOf(c).toUpperCase())) {
+                System.out.println("That's not a letter! Please try again.");
+                System.out.print(">");
+                c = user.next().toLowerCase().charAt(0);
+            }
+
+            if (letters.contains(String.valueOf(c).toUpperCase())) {
+                letters = letters.replace(String.valueOf(c).toUpperCase(), "\u2588");
+            } else {
+                System.out.println("You already tried this letter! Please pick another one.");
+                System.out.print(">");
+                c = user.next().toLowerCase().charAt(0);
+            }
+
+            System.out.println(" \n" + "-=+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+=-" + " \n");
 
             stage_tracker = stage;
             evaluateGuess(checkInput(c));
@@ -107,9 +126,6 @@ public class Game {
             System.out.println("Game has already ended!");
      }
 
-    // current issue:
-    // fat-finger error will be printed after completion of each round
-    // (without input)
     private static boolean playAgainPrompt() {
 	 String input = user.next();
 	 if(input.toLowerCase().equals("y")) { 
