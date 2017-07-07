@@ -29,3 +29,8 @@ Feel free to contribute ideas, improvements or new features to this game. The wa
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+### External sources
+
+We are currently testing the usage of [Wordnik API](http://developer.wordnik.com/) by [Wordnik](http://www.wordnik.com/). To access the data, we are testing a Java interface to the Wordnik API called [Knicker](https://github.com/jeremybrooks/knicker) by Jeremy Brooks. If you're interested in his work, please go to his repository instead. A copy of the license under which [Knicker](https://github.com/jeremybrooks/knicker) has been licensed is included [here](src/main/net/jeremybrooks/knicker/LICENSE.md).
+
