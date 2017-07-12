@@ -4,17 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
 
-import net.jeremybrooks.knicker.AccountApi;
-import net.jeremybrooks.knicker.Knicker;
-import net.jeremybrooks.knicker.Knicker.SortBy;
-import net.jeremybrooks.knicker.Knicker.SortDirection;
-import net.jeremybrooks.knicker.KnickerException;
-import net.jeremybrooks.knicker.WordsApi;
-import net.jeremybrooks.knicker.dto.TokenStatus;
-import net.jeremybrooks.knicker.dto.Word;
-
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
@@ -37,16 +27,24 @@ public class Game {
         }
         input.close();
 
-        //Wornik test
-        setAPIkey("YOUR_API_KEY_HERE");
+        ///////////////////////////////////////////////////////////////////////////////
+        /////Wordnik test
+        //
+        System.out.println("-=+~~~~~~~~~~+=-");
+        WordnikTest.setAPIkey("YOUR_API_KEY_HERE");
+        System.out.println("-=+~~~~~~~~~~+=-");
 		try {
-			testRandomWord_0args();
-			testRandomWord_9args();
-			testRandomWords_12args();
+            //WordnikTest.testRandomWord_0args(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
+            //WordnikTest.testRandomWord_9args(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
+            //WordnikTest.testRandomWords_12args(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
+
+            WordnikTest.testRandomWords_500easy(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
+            //WordnikTest.testRandomWords_1000hard(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        ///////////////////////////////////////////////////////////////End Wordnik test
 		
         System.out.println("-=+   W E L C O M E   T O   H A N G M A N   +=-");
 
@@ -161,105 +159,5 @@ public class Game {
 	 	return playAgainPrompt();
 	 }
    }
-    
-/////////////////////////////////////////////////////////////////////////////////////////
-/////Wordnik test
-/////////////////////////////////////////////////////////////////////////////////////////
 
-//Test Wornik API
-public static Boolean setAPIkey( String key)  {
-	System.setProperty("WORDNIK_API_KEY", key );
-	TokenStatus status;
-	// Check the status of the API key
-	try {
-		status = AccountApi.apiTokenStatus();
-		if (status.isValid()) {
-			System.out.println("API key is valid.");
-			return true;
-		} else {
-			System.out.println("API key is invalid!");
-			System.exit(1);
-			return false;
-		}
-	} catch (KnickerException e) {
-		System.out.println("Set your API key!");
-		e.printStackTrace();
-		System.out.println("Set your API key!");
-		return false;
-	}
-}
-
-
-//Test for calling multiple words with specific conditions
-public static void testRandomWords_12args() throws Exception {
-	System.out.println("Testing multiple random word with specific conditions");
-	boolean hasDictionaryDef = false;
-	EnumSet<net.jeremybrooks.knicker.Knicker.PartOfSpeech> includePartOfSpeech = EnumSet.of(Knicker.PartOfSpeech.noun);; //to fix so the method randomWords works
-	EnumSet<net.jeremybrooks.knicker.Knicker.PartOfSpeech> excludePartOfSpeech = null; //to fix so the method randomWords work
-	int minCorpusCount = 0;
-	int maxCorpusCount = 0;
-	int minDictionaryCount = 0;
-	int maxDictionaryCount = 0;
-	int minLength = 0;
-	int maxLength = 0;
-	SortBy sortBy = null;
-	SortDirection sortDirection = null;
-	int limit = 3;
-	
-	List<Word> result = WordsApi.randomWords(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength, sortBy, sortDirection, limit);
-	
-	minLength = 10;
-	maxLength = 10;
-	result = WordsApi.randomWords(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength, sortBy, sortDirection, limit);
-	//Print list array
-	//System.out.println(Arrays.toString(result.toArray())); //prints everything
-	for (Word Word: result) {
-		System.out.println(Word.getWord());
-	}
-}
-
-
-//Test for calling random word with NO conditions
-public static void testRandomWord_0args() throws Exception {
-	System.out.println("Testing one random word with no conditions");
-	Word result = WordsApi.randomWord();
-	System.out.println( result.getWord() );
-}
-
-
-//Test for calling random word with specific conditions
-public static void testRandomWord_9args() throws Exception {
-	System.out.println("Testing one random word with specific conditions");
-	boolean hasDictionaryDef = false;
-	EnumSet<net.jeremybrooks.knicker.Knicker.PartOfSpeech> includePartOfSpeech = null;
-	EnumSet<net.jeremybrooks.knicker.Knicker.PartOfSpeech> excludePartOfSpeech = null;
-	int minCorpusCount = 0;
-	int maxCorpusCount = 0;
-	int minDictionaryCount = 0;
-	int maxDictionaryCount = 0;
-	int minLength = 0;
-	int maxLength = 0;
-	
-	Word result = WordsApi.randomWord(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength);
-	
-	minLength = 10;
-	result = WordsApi.randomWord(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength);
-	
-	minLength = 5;
-	includePartOfSpeech = EnumSet.of(Knicker.PartOfSpeech.noun);
-	result = WordsApi.randomWord(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength);
-	
-	hasDictionaryDef = false;
-	result = WordsApi.randomWord(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength);
-	
-	includePartOfSpeech = null;
-	maxLength = 5;
-	result = WordsApi.randomWord(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength);
-	
-	//Print list array
-	System.out.println( result.getWord() );
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////End wordnik test
 }
