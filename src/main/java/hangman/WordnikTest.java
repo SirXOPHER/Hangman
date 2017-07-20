@@ -121,17 +121,47 @@ public class WordnikTest {
     public static void testRandomWords_500easy() throws Exception {
         System.out.println("TEST DESCRIPTION: " + "Candidate list for easy difficulty");
         boolean hasDictionaryDef = true;
-        EnumSet<Knicker.PartOfSpeech> includePartOfSpeech = EnumSet.of(Knicker.PartOfSpeech.noun); //to fix so the method randomWords works
-        EnumSet<Knicker.PartOfSpeech> excludePartOfSpeech = EnumSet.of(Knicker.PartOfSpeech.proper_noun); //to fix so the method randomWords work
-        int minCorpusCount = 0;
+        EnumSet<Knicker.PartOfSpeech> includePartOfSpeech = EnumSet.of(Knicker.PartOfSpeech.noun);
+        EnumSet<Knicker.PartOfSpeech> excludePartOfSpeech = 
+          		EnumSet.of(Knicker.PartOfSpeech.proper_noun,	
+        		Knicker.PartOfSpeech.adjective,					
+        		Knicker.PartOfSpeech.verb,						
+        		Knicker.PartOfSpeech.adverb,					
+        		Knicker.PartOfSpeech.interjection,				
+        		Knicker.PartOfSpeech.pronoun,					
+        		Knicker.PartOfSpeech.preposition,				
+        		Knicker.PartOfSpeech.abbreviation,				
+        		Knicker.PartOfSpeech.affix,						
+        		Knicker.PartOfSpeech.article,					
+        		Knicker.PartOfSpeech.auxiliary_verb,			
+        		Knicker.PartOfSpeech.conjunction,				
+        		Knicker.PartOfSpeech.definite_article,			
+        		Knicker.PartOfSpeech.idiom,
+        		Knicker.PartOfSpeech.preposition,				
+        		Knicker.PartOfSpeech.prefix,
+        		Knicker.PartOfSpeech.suffix,
+        		Knicker.PartOfSpeech.past_participle,			
+        		Knicker.PartOfSpeech.imperative,				
+        		Knicker.PartOfSpeech.noun_plural,
+        		Knicker.PartOfSpeech.proper_noun_plural,		
+        		Knicker.PartOfSpeech.verb_intransitive,			
+        		Knicker.PartOfSpeech.pronoun,					
+        		Knicker.PartOfSpeech.verb_transitive,
+        		Knicker.PartOfSpeech.proper_noun_posessive,		
+        		Knicker.PartOfSpeech.noun_posessive,			
+        		Knicker.PartOfSpeech.family_name,				
+        		Knicker.PartOfSpeech.given_name,				
+        		Knicker.PartOfSpeech.phrasal_prefix);			
+
+        int minCorpusCount = 100000;
         int maxCorpusCount = -1;
-        int minDictionaryCount = 20;
+        int minDictionaryCount = 5;
         int maxDictionaryCount = -1;
-        int minLength = 8;
+        int minLength = 6;
         int maxLength = 12;
         Knicker.SortBy sortBy = null;
         Knicker.SortDirection sortDirection = null;
-        int limit = 500;
+        int limit = 30;
 
         List<Word> result = WordsApi.randomWords(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength, sortBy, sortDirection, limit);
 

@@ -214,78 +214,67 @@ public class WordsApi extends Knicker {
 										 int minLength, int maxLength, SortBy sortBy,
 										 SortDirection sortDirection, int limit) throws KnickerException {
 
-		Map<String, String> params = new HashMap<String, String>();
-
+		StringBuilder params = new StringBuilder();
 		if (hasDictionaryDef) {
-			params.put("hasDictionaryDef", "true");
+			params.append("hasDictionaryDef=true,");
 		} else {
-			params.put("hasDictionaryDef", "false");
+			params.append("hasDictionaryDef=false,");
 		}
 
 		if (includePartOfSpeech != null && includePartOfSpeech.size() > 0) {
-			StringBuilder sb = new StringBuilder();
 			for (PartOfSpeech sd : includePartOfSpeech) {
-				sb.append(sd.toString().trim().replaceAll("_", "-")).append(',');
+				StringBuilder sb = new StringBuilder();
+				sb.append(sd.toString().trim().replaceAll("_", "-"));
+				params.append("includePartOfSpeech=" + sb.toString() + ",");
 			}
-			if (sb.length() > 0) {
-				sb.deleteCharAt(sb.length() - 1);
-			}
-
-			params.put("includePartOfSpeech", sb.toString());
 		}
-
 		if (excludePartOfSpeech != null && excludePartOfSpeech.size() > 0) {
-			StringBuilder sb = new StringBuilder();
 			for (PartOfSpeech sd : excludePartOfSpeech) {
-				sb.append(sd.toString().trim().replaceAll("_", "-")).append(',');
+				StringBuilder sb = new StringBuilder();
+				sb.append(sd.toString().trim().replaceAll("_", "-"));
+				params.append("excludePartOfSpeech=" + sb.toString() + ",");
 			}
-			if (sb.length() > 0) {
-				sb.deleteCharAt(sb.length() - 1);
-			}
-
-			params.put("excludePartOfSpeech", sb.toString());
 		}
-
+		
 		if (minCorpusCount > 0) {
-			params.put("minCorpusCount", Integer.toString(minCorpusCount));
+			params.append("minCorpusCount=" + Integer.toString(minCorpusCount));
 		}
 		if (maxCorpusCount > 0) {
-			params.put("maxCorpusCount", Integer.toString(maxCorpusCount));
+			params.append(",maxCorpusCount=" + Integer.toString(maxCorpusCount));
 		}
 
 		if (minDictionaryCount > 0) {
-			params.put("minDictionaryCount", Integer.toString(minDictionaryCount));
+			params.append(",minDictionaryCount=" + Integer.toString(minDictionaryCount));
 		}
 		if (maxDictionaryCount > 0) {
-			params.put("maxDictionaryCount", Integer.toString(maxDictionaryCount));
+			params.append(",maxDictionaryCount=" + Integer.toString(maxDictionaryCount));
 		}
 
 		if (minLength > 0) {
-			params.put("minLength", Integer.toString(minLength));
+			params.append(",minLength=" + Integer.toString(minLength));
 		}
 		if (maxLength > 0) {
-			params.put("maxLength", Integer.toString(maxLength));
+			params.append(",maxLength=" + Integer.toString(maxLength));
 		}
 
 		if (sortBy != null) {
-			params.put("sortBy", sortBy.toString());
+			params.append(",sortBy=" + sortBy.toString());
 		}
 
 		if (sortDirection != null) {
-			params.put("sortDirection", sortDirection.toString());
+			params.append(",sortDirection=" + sortDirection.toString());
 		}
 
 		if (limit > 0) {
-			params.put("limit", Integer.toString(limit));
+			params.append(",limit=" + Integer.toString(limit));
 		}
-
-
+	
 		StringBuilder uri = new StringBuilder(WORDS_ENDPOINT);
 		uri.append("/randomWords");
-		if (params.size() > 0) {
-			uri.append('?').append(Util.buildParamList(params));
+		if (params.length() > 0) {
+			uri.append('?').append(params.toString().replaceAll(",", "&")  + "&api_key=" + System.getProperty("WORDNIK_API_KEY") );
+			System.out.println("This is the request url: "+uri.toString());
 		}
-
 		return DTOBuilder.buildWords(Util.doGet(uri.toString()));
 	}
 
