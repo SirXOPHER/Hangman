@@ -27,28 +27,57 @@ public class Game {
         }
         input.close();
 
-        ///////////////////////////////////////////////////////////////////////////////
-        /////Wordnik test
-        //
+        // Wordnik API: fetch random words list from online dictionary
         System.out.println("-=+~~~~~~~~~~+=-");
-        WordnikTest.setAPIkey("YOUR_API_KEY_HERE");
+        Boolean online = WordPool.setAPIkey("YOUR_API_KEY_HERE");
         System.out.println("-=+~~~~~~~~~~+=-");
+
+/*------// test block deactivated (to be removed after testing phase)
+        //---Wordnik test---///////////////////////////////////////////////////////////
 		try {
             //WordnikTest.testRandomWord_0args(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
             //WordnikTest.testRandomWord_9args(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
             //WordnikTest.testRandomWords_12args(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
 
-            WordnikTest.testRandomWords_500easy(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
+            //WordnikTest.testRandomWords_500easy(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
             //WordnikTest.testRandomWords_1000hard(); System.out.println("-=+~~~~~~~~~~+=-" + " \n");
+
+            //WordPool.easy();
+            //WordPool.hard();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         ///////////////////////////////////////////////////////////////End Wordnik test
+------*/
 		
         System.out.println("-=+   W E L C O M E   T O   H A N G M A N   +=-");
 
-        playRound();
+        // code block asking for level of difficulty
+        if (!online) {
+            System.out.println(" \n \n" + "You are playing Hangman offline today.");
+            playRound();
+        } else {
+            System.out.println(" \n \n" + "Please choose your difficulty for this session.");
+            System.out.print(" \n \n" + "[E]ASY or [H]ARD:");
+            if (difficultyPrompt()) {
+                System.out.println(" \n \n" + "Let's keep things nice and easy.");
+                try {
+                    words = WordPool.easy();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                playRound();
+            } else {
+                System.out.println(" \n \n" + "So you are up for a bit of a challenge? Good luck!");
+                try {
+                    words = WordPool.hard();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                playRound();
+            }
+        }
 
         // code block asking for another round or exit
         boolean finished = false;
@@ -159,5 +188,19 @@ public class Game {
 	 	return playAgainPrompt();
 	 }
    }
+
+    private static boolean difficultyPrompt() {
+        String input = user.next();
+        if(input.toLowerCase().equals("e")) {
+            return true;
+        }
+        else if(input.toLowerCase().equals("h")) {
+            return false;
+        }
+        else{
+            System.out.println(" \n \n" + "Fat-finger error? Let's try this again:");
+            return difficultyPrompt();
+        }
+    }
 
 }
