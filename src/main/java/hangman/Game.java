@@ -23,7 +23,7 @@ public class Game {
 
         // Wordnik API: fetch random words list from online dictionary
     	// If API key is incorrect then switch to offline word list 
-        if( WordPool.setAPIkey("4af7b4f3de8904bc7c6000308560483fa735a433fece714a5") ){
+        if( WordPool.setAPIkey("YOUR_API_KEY_HERE") ){
         	playOnline();
         }else{
         	playOffline();
