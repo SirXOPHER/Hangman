@@ -24,10 +24,9 @@ public class WordPool {
         // Check the status of the API key
         try {
             status = AccountApi.apiTokenStatus();
-            if (status.isValid()) {
-                System.out.println("API key is valid.");
+            if (status.isValid())
                 return true;
-            } else {
+            else {
                 System.out.println("API key is invalid!");
                 System.exit(1);
                 return false;
@@ -35,14 +34,13 @@ public class WordPool {
         } catch (KnickerException e) {
             System.out.println("Set your API key!");
             e.printStackTrace();
-            System.out.println("Set your API key!");
             return false;
         }
     }
 
 
     // dictionary query parameters for easy difficulty
-    public static ArrayList<String> easy() throws Exception {
+    public static ArrayList<String> easy() throws KnickerException {
 
         boolean hasDictionaryDef = true;
         EnumSet<Knicker.PartOfSpeech> includePartOfSpeech = EnumSet.of(Knicker.PartOfSpeech.noun);
@@ -88,18 +86,8 @@ public class WordPool {
 
         List<Word> result = WordsApi.randomWords(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength, sortBy, sortDirection, limit);
 
-/*------// printout deactivated (remove block comment to reactivate)
-        System.out.println("LIST PRINTOUT: " + "list for easy difficulty");
-        System.out.println(" \n" + "NUMBER OF WORDS: " + result.size() + " \n");
-
-        int count = 1;
-        for (Word Word: result) {
-            System.out.printf("%03d | ", count);
-            System.out.println(Word.getWord());
-            count++;
-        }
-        System.out.println(" \n" + "-=+~~~~~~~~~~+=-" + " \n");
-------*/
+        //printout deactivated
+        //printWords( result, "easy" );
 
         ArrayList<String> easyWords = new ArrayList<String>();
         for (Word w: result) {
@@ -110,7 +98,7 @@ public class WordPool {
 
 
     // dictionary query parameters for hard difficulty
-    public static ArrayList<String> hard() throws Exception {
+    public static ArrayList<String> hard() throws KnickerException {
 
         boolean hasDictionaryDef = false;
         EnumSet<Knicker.PartOfSpeech> includePartOfSpeech = EnumSet.of(Knicker.PartOfSpeech.noun);
@@ -152,22 +140,12 @@ public class WordPool {
         int maxLength = 16;
         Knicker.SortBy sortBy = null;
         Knicker.SortDirection sortDirection = null;
-        int limit = 1000;
+        int limit = 500;
 
         List<Word> result = WordsApi.randomWords(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength, sortBy, sortDirection, limit);
 
-/*------// printout deactivated (remove block comment to reactivate)
-        System.out.println("LIST PRINTOUT: " + "list for hard difficulty");
-        System.out.println(" \n" + "NUMBER OF WORDS: " + result.size() + " \n");
-
-        int count = 1;
-        for (Word Word: result) {
-            System.out.printf("%03d | ", count);
-            System.out.println(Word.getWord());
-            count++;
-        }
-        System.out.println(" \n" + "-=+~~~~~~~~~~+=-" + " \n");
-------*/
+        //printout deactivated
+        //printWords( result, "hard" );
 
         ArrayList<String> hardWords = new ArrayList<String>();
         for (Word w: result) {
@@ -175,6 +153,20 @@ public class WordPool {
         }
         return hardWords;
     }
+    
+    
+    // Print retrieved words
+    public static void printWords(List<Word> retrievedList , String difficulty) {
+    	  System.out.println("LIST PRINTOUT: " + "list for " + difficulty + " difficulty");
+          System.out.println(" \n" + "NUMBER OF WORDS: " + retrievedList.size() + " \n");
 
+          int count = 1;
+          for (Word Word: retrievedList) {
+              System.out.printf("%03d | ", count);
+              System.out.println(Word.getWord());
+              count++;
+          }
+          System.out.println(" \n" + "-=+~~~~~~~~~~+=-" + " \n");
+    }
 
 }
