@@ -140,7 +140,7 @@ public class WordPool {
         int maxLength = 16;
         Knicker.SortBy sortBy = null;
         Knicker.SortDirection sortDirection = null;
-        int limit = 500;
+        int limit = 1000;
 
         List<Word> result = WordsApi.randomWords(hasDictionaryDef, includePartOfSpeech, excludePartOfSpeech, minCorpusCount, maxCorpusCount, minDictionaryCount, maxDictionaryCount, minLength, maxLength, sortBy, sortDirection, limit);
 
