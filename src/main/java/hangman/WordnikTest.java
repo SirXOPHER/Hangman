@@ -40,7 +40,6 @@ public class WordnikTest {
         } catch (KnickerException e) {
             System.out.println("Set your API key!");
             e.printStackTrace();
-            System.out.println("Set your API key!");
             return false;
         }
     }

@@ -1,11 +1,9 @@
 package hangman;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
-
+import net.jeremybrooks.knicker.KnickerException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /* Hangman is a Java implementation of the classic paper and pencil guessing game. */
@@ -13,24 +11,23 @@ import java.util.Random;
 public class Game {
 
     private static Scanner user = new Scanner(System.in);   // reading all user input
-
     private static int stage = 0;       // stage of current round
-    private static List<String> words;  // pool of words
+    private static ArrayList<String> words = new ArrayList<String>();  // pool of words
     private static String word;         // plaintext word for current round
     private static String hidden;       // masked word
-
-    public static void main(String[] args) throws FileNotFoundException {
-        Scanner input = new Scanner(new FileReader("src/main/resources/words.txt"));
-        words = new ArrayList<String>();
-        while (input.hasNextLine()) {
-            words.add(input.nextLine());
-        }
-        input.close();
+    private static boolean finished = false;
+    
+    public static void main(String[] args) {
+    	System.out.println("-=+   W E L C O M E   T O   H A N G M A N   +=-");
+    	System.out.println("Loading...");
 
         // Wordnik API: fetch random words list from online dictionary
-        System.out.println("-=+~~~~~~~~~~+=-");
-        Boolean online = WordPool.setAPIkey("YOUR_API_KEY_HERE");
-        System.out.println("-=+~~~~~~~~~~+=-");
+    	// If API key is incorrect then switch to offline word list 
+        if( WordPool.setAPIkey("YOUR_API_KEY_HERE") ){
+        	playOnline();
+        }else{
+        	playOffline();
+        }
 
 /*------// test block deactivated (to be removed after testing phase)
         //---Wordnik test---///////////////////////////////////////////////////////////
@@ -51,37 +48,9 @@ public class Game {
         ///////////////////////////////////////////////////////////////End Wordnik test
 ------*/
 		
-        System.out.println("-=+   W E L C O M E   T O   H A N G M A N   +=-");
-
-        // code block asking for level of difficulty
-        if (!online) {
-            System.out.println(" \n \n" + "You are playing Hangman offline today.");
-            playRound();
-        } else {
-            System.out.println(" \n \n" + "Please choose your difficulty for this session.");
-            System.out.print(" \n \n" + "[E]ASY or [H]ARD:");
-            if (difficultyPrompt()) {
-                System.out.println(" \n \n" + "Let's keep things nice and easy.");
-                try {
-                    words = WordPool.easy();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                playRound();
-            } else {
-                System.out.println(" \n \n" + "So you are up for a bit of a challenge? Good luck!");
-                try {
-                    words = WordPool.hard();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                playRound();
-            }
-        }
-
+        
         // code block asking for another round or exit
-        boolean finished = false;
-        do {
+        while (!finished) {
             System.out.println(" \n \n" + "Do you fancy another round of Hangman?");
             System.out.print(" \n \n" + "YES [Y] or NO [N]:");
             if (playAgainPrompt()) {
@@ -93,21 +62,78 @@ public class Game {
                 user.close();
                 finished = true;
             }
-        } while (!finished);
+        }
     }
 
-    private static void playRound() throws FileNotFoundException {
-        Scanner game_state = new Scanner(new FileReader("src/main/resources/game_state.txt"));
-        game_state.useDelimiter("\\s*;\\s*");
+    private static void playOffline() {
+    	Scanner input;
+    	System.out.println("Switching to offline...");
+    	System.out.println(" \n \n" + "You are playing Hangman offline today.");
+    	
+    	//Load words from offline list
+    	try{
+ 	       	input = new Scanner(new FileReader("src/main/resources/words.txt"));
+     	}catch(Exception e){
+     		System.out.println("Offline word list not found! Closing program! \nError: " + e);
+     		finished = true;
+     		return;
+     	}
+     	
+     	while (input.hasNextLine())
+             words.add(input.nextLine());
+
+         input.close();
+         playRound();
+    }
+    
+    // If word list generation fails then switch to offline word list
+    private static void playOnline() {
+    	System.out.println(" \n \n" + "Please choose your difficulty for this session.");
+        System.out.print(" \n \n" + "[E]ASY or [H]ARD:");
+        
+        if (difficultyPrompt()) {
+            System.out.println(" \n \n" + "Let's keep things nice and easy.");
+            try {
+            	System.out.println("Loading words...");
+                words = WordPool.easy();
+            } catch (KnickerException e) {
+            	System.out.println("There was an error with online services:"+e);
+            	playOffline();
+            	return;
+            }
+        } else {
+            System.out.println(" \n \n" + "So you are up for a bit of a challenge? Good luck!");
+            try {
+            	System.out.println("Loading words...");
+                words = WordPool.hard();
+            } catch (KnickerException e) {
+            	System.out.println("There was an error with online services: "+e);
+            	playOffline();
+            	return;
+            }
+        }
+        playRound();
+    }
+    
+    private static void playRound() {
+    	String letters  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // remaining letters to pick from
+    	String alphabet  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // required for validity check
+    	Scanner game_state;
+    	int stage_tracker;
+    	
+    	try{
+    		game_state = new Scanner(new FileReader("src/main/resources/game_state.txt"));
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return;
+    	}
+  
+    	game_state.useDelimiter("\\s*;\\s*");
         printGameStateString(game_state); // show title screen on console (first in game_state.txt)
         Random pick = new Random();
-        int wordPoolSize = words.size(); // dynamic approach: variable that measures number of words in text file
-        int  n = pick.nextInt(wordPoolSize) + 1;
+        int  n = pick.nextInt(words.size()) + 1; // dynamic approach: variable that measures number of words in text file
         word = words.get(n-1); // to-do: replace with .remove() and handle empty words list
         hidden = new String(new char[word.length()]).replace("\0", "_");
-        String letters  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // remaining letters to pick from
-        String alphabet  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // required for validity check
-        int stage_tracker;
 
         while (hidden.contains("_") && stage < 7) {
             // System.out.println(" \n \n" + "ONLY FOR DEVELOPMENT // " + "STAGE:" + stage + " | " + "WORD:" + word);
@@ -124,13 +150,12 @@ public class Game {
                 c = user.next().toLowerCase().charAt(0);
             }
 
-            if (letters.contains(String.valueOf(c).toUpperCase())) {
-                letters = letters.replace(String.valueOf(c).toUpperCase(), "\u2588");
-            } else {
-                System.out.println("You already tried this letter! Please pick another one.");
-                System.out.print(">");
-                c = user.next().toLowerCase().charAt(0);
+            while (!letters.contains(String.valueOf(c).toUpperCase())) {
+            	 System.out.println("You already tried this letter! Please pick another one.");
+                 System.out.print(">");
+                 c = user.next().toLowerCase().charAt(0);
             }
+            letters = letters.replace(String.valueOf(c).toUpperCase(), "\u2588");
 
             System.out.println(" \n" + "-=+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+=-" + " \n");
 
@@ -167,8 +192,8 @@ public class Game {
         else                             { hidden = checked; }
     }
     
-    // each time it's called it will print next set of characters surrounded by ; and ; in file game_state.txt
-    private static void printGameStateString(Scanner state) throws FileNotFoundException{
+    // Each time it's called it will print next set of characters surrounded by ; and ; in file game_state.txt
+    private static void printGameStateString(Scanner state) {
     	if( state.hasNext() ){
 	    	System.out.println(state.next());
     	}else
